@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "Faye", targets: ["Faye"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Moya/Moya.git", .upToNextMajor(from: "14.0.0")),
+        .package(url: "https://github.com/Moya/Moya.git", .upToNextMajor(from: "14.0.1")),
         .package(url: "https://github.com/daltoniam/Starscream.git", .upToNextMajor(from: "4.0.4")),
         .package(url: "https://github.com/sendyhalim/Swime", .upToNextMajor(from: "3.1.0")),
     ],
