@@ -53,7 +53,7 @@ public final class Client {
     /// // Create Chris's user feed.
     /// let chrisFeed = Client.shared.flatFeed(feedSlug: "user", userId: "chris")
     /// ```
-    public static let shared = Client(apiKey: Client.config.apiKey,
+    public static var shared = Client(apiKey: Client.config.apiKey,
                                       appId: Client.config.appId,
                                       baseURL: Client.config.baseURL,
                                       networkProvider: Client.config.networkProvider,
