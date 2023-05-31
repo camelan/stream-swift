@@ -15,11 +15,11 @@ typealias NetworkProvider = MoyaProvider<MultiTarget>
 
 /// GetStream client.
 public final class Client {
-    let apiKey: String
-    let appId: String
-    let baseURL: BaseURL
-    let callbackQueue: DispatchQueue
-    let workingQueue: DispatchQueue
+    public let apiKey: String
+    public let appId: String
+    public let baseURL: BaseURL
+    public let callbackQueue: DispatchQueue
+    public let workingQueue: DispatchQueue
     
     var token: Token = "" {
         didSet {
@@ -27,7 +27,7 @@ public final class Client {
         }
     }
     
-    private let networkProvider: NetworkProvider
+    public let networkProvider: NetworkProvider
     private let networkAuthorization: AuthorizationMoyaPlugin
     private var consecutiveFailures = 0
     let logger: ClientLogger?
