@@ -11,7 +11,7 @@ import Moya
 
 typealias ClientCompletionResult = Result<Moya.Response, ClientError>
 typealias ClientCompletion = (_ result: ClientCompletionResult) -> Void
-typealias NetworkProvider = MoyaProvider<MultiTarget>
+public typealias NetworkProvider = MoyaProvider<MultiTarget>
 
 /// GetStream client.
 public final class Client {
