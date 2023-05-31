@@ -65,7 +65,7 @@ public final class Client {
         return !apiKey.isEmpty && !appId.isEmpty
     }
     
-    private init(apiKey: String,
+    public init(apiKey: String,
                  appId: String,
                  baseURL: BaseURL = BaseURL(),
                  networkProvider: NetworkProvider? = nil,
