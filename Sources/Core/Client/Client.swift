@@ -21,7 +21,7 @@ public final class Client {
     public let callbackQueue: DispatchQueue
     public let workingQueue: DispatchQueue
     
-    var token: Token = "" {
+    public var token: Token = "" {
         didSet {
             networkAuthorization.updateToken(token)
         }
