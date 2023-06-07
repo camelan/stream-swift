@@ -33,9 +33,9 @@ public final class Client {
     let logger: ClientLogger?
     
     /// The current user id from the Token.
-    public internal(set) var currentUserId: String?
+    public var currentUserId: String?
     /// The current user.
-    public internal(set) var currentUser: UserProtocol?
+    public var currentUser: UserProtocol?
     
     /// A configuration to initialize the shared Client.
     public static var config = Config(apiKey: "", appId: "")
