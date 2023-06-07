@@ -21,7 +21,7 @@ public struct BaseURL {
     ///     - service: a service type.
     ///     - version: a version of API.
     public init(location: Location = .default, service: Service = .api, version: String = "1.0") {
-        url = URL(string: "https://eu-west-\(service.rawValue).stream-io-api.com/\(service.rawValue)/v\(version)/")!
+        url = URL(string: "https://dublin-\(service.rawValue).stream-io-api.com/\(service.rawValue)/v\(version)/")!
     }
     
     /// Create a base URL with a custom URL.
