@@ -141,6 +141,8 @@ extension Client {
 // MARK: - Connection
 
 extension Client: WebSocketDelegate {
+    public func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocketClient) {}
+    
     public func didReceive(event: WebSocketEvent, client: WebSocket) {
         switch event {
         case .connected(let headers):
