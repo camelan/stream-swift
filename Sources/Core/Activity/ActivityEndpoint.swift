@@ -52,7 +52,9 @@ extension ActivityEndpoint: StreamTargetType {
             let ids = ids.map { $0 }.joined(separator: ",")
             return .requestParameters(parameters: ["ids" : ids,
                                                    "withReactionCounts": true,
-                                                   "withOwnReactions": true], encoding: URLEncoding.default)
+                                                   "withOwnReactions": true,
+                                                   "withRecentReactions": true],
+                                      encoding: URLEncoding.default)
             
         case let .get(_, foreignIds: foreignIds, times: times):
             return .requestParameters(parameters: idParameters(with: foreignIds, times: times), encoding: URLEncoding.default)
