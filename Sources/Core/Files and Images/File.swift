@@ -53,6 +53,17 @@ public extension File {
         mimeType = Swime.mimeType(byFileExtension: "jpg")
     }
     
+    init?(name: String, videoURL: URL) {
+        do {
+            self.name = name
+            self.data = try Data(contentsOf: videoURL)
+            self.mimeType = Swime.mimeType(byFileExtension: "mp4")
+        } catch {
+            print("Unable to load data: \(error)")
+            return nil
+        }
+    }
+    
     /// Create a File from a given image.
     ///
     /// - Parameters:
