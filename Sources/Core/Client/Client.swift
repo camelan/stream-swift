@@ -212,15 +212,20 @@ extension Task {
 extension Client {
     /// Make a request with a given endpoint.
     @discardableResult
-    func request(endpoint: TargetType, completion: @escaping ClientCompletion) -> Cancellable {
+    func request(endpoint: TargetType,
+                 completion: @escaping ClientCompletion,
+                 fileUploadProgress: @escaping ((Double) -> Void) = { _ in }) -> Cancellable {
         if token.isEmpty {
             completion(.failure(.clientSetup("Network layer wasn't setup. Probably Token or User wasn't provided or it was bad.")))
             return SimpleCancellable()
         }
         
         logger?.log(endpoint)
-        
-        return networkProvider.request(MultiTarget(endpoint)) { [weak self] result in
+    
+        return networkProvider.request(MultiTarget(endpoint)) { progressStatus in
+            let progressPrecentage = progressStatus.progressObject?.fractionCompleted ?? 0.0
+            fileUploadProgress(progressPrecentage)
+        } completion: { [weak self] result in
             guard let self = self else {
                 completion(.failure(.unexpectedError(nil)))
                 return
@@ -242,16 +247,16 @@ extension Client {
                 }
             } catch let moyaError as MoyaError {
                 if case .statusCode(let moyaErrorResponse) = moyaError,
-                    moyaErrorResponse.statusCode >= 429,
-                    moyaErrorResponse.statusCode <= 500,
-                    self.retry(endpoint: endpoint, completion: completion) {
+                   moyaErrorResponse.statusCode >= 429,
+                   moyaErrorResponse.statusCode <= 500,
+                   self.retry(endpoint: endpoint, completion: completion) {
                     return
                 }
                 
                 if case .underlying(let error, _) = moyaError,
-                    let urlError = error as? URLError,
-                    urlError.errorCode == URLError.timedOut.rawValue,
-                    self.retry(endpoint: endpoint, completion: completion) {
+                   let urlError = error as? URLError,
+                   urlError.errorCode == URLError.timedOut.rawValue,
+                   self.retry(endpoint: endpoint, completion: completion) {
                     return
                 }
                 
