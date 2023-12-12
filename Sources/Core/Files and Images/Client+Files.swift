@@ -25,8 +25,15 @@ extension Client {
     
     /// Upload a list of `File`.
     @discardableResult
-    public func upload(files: [File], completion: @escaping MultipleUploadCompletion) -> Cancellable {
-        return upload(files: files, endpoint: { FilesEndpoint.uploadFile($0) }, completion: completion)
+    public func upload(files: [File],
+                       completion: @escaping MultipleUploadCompletion,
+                       fileUploadedCompletion: @escaping (() -> Void),
+                       fileUploadProgress: @escaping ((Double) -> Void)) -> Cancellable {
+        return upload(files: files,
+                      endpoint: { FilesEndpoint.uploadFile($0) },
+                      completion: completion,
+                      fileUploadedCompletion: fileUploadedCompletion,
+                      fileUploadProgress: fileUploadProgress)
     }
     
     /// Delete a file with a given file URL.
@@ -56,8 +63,13 @@ extension Client {
     
     /// Upload a list of image files.
     @discardableResult
-    public func upload(images: [File], completion: @escaping MultipleUploadCompletion) -> Cancellable {
-        return upload(files: images, endpoint: { FilesEndpoint.uploadImage($0) }, completion: completion)
+    public func upload(images: [File],
+                       completion: @escaping MultipleUploadCompletion,
+                       fileUploadedCompletion: @escaping () -> Void) -> Cancellable {
+        return upload(files: images,
+                      endpoint: { FilesEndpoint.uploadImage($0) },
+                      completion: completion,
+                      fileUploadedCompletion: fileUploadedCompletion)
     }
     
     /// Delete an image file with a given image URL.
@@ -96,7 +108,9 @@ extension Client {
 extension Client {
     private func upload(files: [File],
                         endpoint: @escaping (_ file: File) -> TargetType,
-                        completion: @escaping MultipleUploadCompletion) -> Cancellable {
+                        completion: @escaping MultipleUploadCompletion,
+                        fileUploadedCompletion: @escaping (() -> Void),
+                        fileUploadProgress: @escaping ((Double) -> Void) = { _ in }) -> Cancellable {
         guard files.count > 0 else {
             return SimpleCancellable(isCancelled: true)
         }
@@ -115,12 +129,13 @@ extension Client {
                     return
                 }
                 
-                proxyCancellable.cancellable = self?.request(endpoint: endpoint(files[fileIndex])) { result in
+                proxyCancellable.cancellable = self?.request(endpoint: endpoint(files[fileIndex]), completion: { result in
                     if let self = self {
                         result.parseUpload(self.workingQueue) { result in
                             do {
                                 let url = try result.get()
                                 urls.append(url)
+                                fileUploadedCompletion()
                                 request(fileIndex: fileIndex + 1)
                             } catch let clientError as ClientError {
                                 completion(.failure(clientError))
@@ -129,7 +144,7 @@ extension Client {
                             }
                         }
                     }
-                }
+                }, fileUploadProgress: fileUploadProgress)
             }
         }
         
