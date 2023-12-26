@@ -31,6 +31,7 @@ extension Feed {
     ///            Store the object in a variable for the getting updates and then set it to nil to unsubscribe.
     public func subscribe<T: ActivityProtocol>(typeOf type: T.Type,
                                                decoder: JSONDecoder = .default,
+                                               logErrorAction: ((String, String) -> Void)?,
                                                subscription: @escaping Subscription<T>) -> SubscribedChannel {
         let channel = Channel(notificationChannelName, client: Client.fayeClient) { [weak self] data  in
             guard let self = self else {
@@ -55,6 +56,7 @@ extension Feed {
         channel.ext = ["api_key": Client.shared.apiKey,
                        "signature": Client.shared.token,
                        "user_id": notificationChannelName]
+        Client.fayeClient.logErrorAction = logErrorAction
         
         do {
             try Client.fayeClient.subscribe(to: channel)
