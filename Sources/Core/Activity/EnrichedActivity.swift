@@ -25,6 +25,7 @@ open class EnrichedActivity<ActorType: Enrichable, ObjectType: Enrichable, React
         case userOwnReactions = "own_reactions"
         case latestReactions = "latest_reactions"
         case reactionCounts = "reaction_counts"
+        case user
     }
     
     /// The Stream id of the activity.
@@ -48,6 +49,8 @@ open class EnrichedActivity<ActorType: Enrichable, ObjectType: Enrichable, React
     public var object: ObjectType {
         return safeObject.value
     }
+    
+    public var user: UserProfileImage?
     
     /// A unique ID from your application for this activity. IE: pin:1 or like:300.
     public var foreignId: String?
@@ -160,4 +163,9 @@ public struct EnrichingActivityError: LocalizedError, Decodable, CustomStringCon
     public var errorDescription: String? {
         return description
     }
+}
+
+
+public struct UserProfileImage: Codable {
+   public var profilePicture: String?
 }
