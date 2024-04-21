@@ -16,6 +16,7 @@ public final class Client {
     public static var logsEnabled = false
     
     private static let maxAttemptsToReconnect = 5
+    public var logErrorAction: ((String, String) -> Void)?
     
     private let webSocket: WebSocket
     private var weakChannels = [WeakChannel]()
@@ -150,6 +151,7 @@ extension Client: WebSocketDelegate {
                 attemptsToReconnect = 0
                 handshakeTimer.resume()
             } catch {
+                logErrorAction?("WS Connect error", "error: \(error.localizedDescription)")
                 log("❌ WS Connect error:", error)
                 applyAdvice()
             }
@@ -158,9 +160,8 @@ extension Client: WebSocketDelegate {
             log()
             handshakeTimer.suspend()
             clientId = nil
-            
+            logErrorAction?("WS Disconnect", "reason: \(reason), code: \(code)")
             log("❌ WS Disconnect: \(reason), \(code)")
-            
             applyAdvice()
         case .text(let string):
             guard let data = string.data(using: .utf8) else {
@@ -182,12 +183,15 @@ extension Client: WebSocketDelegate {
             break
         case .cancelled:
             isWebSocketConnected = false
+            logErrorAction?("WS Disconnect: CANCELLED", "")
             log("❌ WS Disconnect: CANCELLED")
-        case .error(let error):
+        case .error(let clientError):
             isWebSocketConnected = false
-            log("❌ WS Disconnect with error: \(error)")
-            //handleError(error)
+            logErrorAction?("WS Disconnect", "error: \(clientError?.localizedDescription ?? "")")
+            log("❌ WS Disconnect with error: \(clientError)")
         case .peerClosed:
+            logErrorAction?("PEER ClOSED", "")
+            applyAdvice()
             break
         }
     }
@@ -237,6 +241,7 @@ extension Client {
             }
         } catch {
             log("❌", error)
+            logErrorAction?("websocketDidReceiveData", "error: \(error.localizedDescription)")
         }
     }
     
@@ -272,6 +277,7 @@ extension Client {
                     try subscribe(to: channel)
                 } catch {
                     log("❌ subscribe to channel", channel, error)
+                    logErrorAction?("subscribe to channel", "error: \(error.localizedDescription)")
                     break
                 }
             }
@@ -318,7 +324,6 @@ extension Client {
             attemptsToReconnect = 0
             return
         }
-        
         log()
         webSocket.callbackQueue.asyncAfter(deadline: .now() + timeInterval) { [weak self] in self?.connect() }
     }
