@@ -13,9 +13,9 @@ let package = Package(
         .library(name: "Faye", targets: ["Faye"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Moya/Moya.git", .upToNextMajor(from: "14.0.1")),
-        .package(url: "https://github.com/daltoniam/Starscream.git", .upToNextMajor(from: "4.0.4")),
-        .package(url: "https://github.com/camelan/Swime", .upToNextMajor(from: "3.1.1")),
+        .package(url: "https://github.com/Moya/Moya.git", .exactItem("14.0.1")),
+        .package(url: "https://github.com/daltoniam/Starscream.git", .exactItem("4.0.6")),
+        .package(url: "https://github.com/camelan/Swime", .exactItem("3.1.1")),
     ],
     targets: [
         .target(name: "GetStream", dependencies: ["Moya", "Faye", .product(name: "Swime", package: "Swime")], path: "Sources", exclude: ["Token"]),
