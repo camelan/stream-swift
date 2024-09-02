@@ -34,7 +34,7 @@ public class Feed: CustomStringConvertible {
     ///     - callbackQueue: a callback queue for completion requests. If nil, then `client.callbackQueue` would be used.
     public init(_ feedId: FeedId, callbackQueue: DispatchQueue? = nil) {
         self.feedId = feedId
-        self.callbackQueue = callbackQueue ?? Client.shared.callbackQueue
+        self.callbackQueue = callbackQueue ?? Client.feedSharedClient.callbackQueue
     }
 }
 
@@ -49,7 +49,7 @@ extension Feed {
     /// - Returns: an object to cancel the request.
     @discardableResult
     public func add<T: ActivityProtocol>(_ activity: T, completion: @escaping ActivityCompletion<T>) -> Cancellable {
-        return Client.shared.request(endpoint: FeedActivityEndpoint.add(activity, feedId: feedId)) { [weak self] result in
+        return Client.feedSharedClient.request(endpoint: FeedActivityEndpoint.add(activity, feedId: feedId)) { [weak self] result in
             guard let self = self else {
                 return
             }
@@ -95,7 +95,7 @@ extension Feed {
     /// - Returns: an object to cancel the request.
     @discardableResult
     public func remove(activityId: String, completion: @escaping RemovedCompletion) -> Cancellable {
-        return Client.shared.request(endpoint: FeedEndpoint.deleteById(activityId, feedId: feedId)) { [weak self] result in
+        return Client.feedSharedClient.request(endpoint: FeedEndpoint.deleteById(activityId, feedId: feedId)) { [weak self] result in
             if let self = self {
                 result.parseRemoved(self.callbackQueue, completion)
             }
@@ -110,7 +110,7 @@ extension Feed {
     /// - Returns: an object to cancel the request.
     @discardableResult
     public func remove(foreignId: String, completion: @escaping RemovedCompletion) -> Cancellable {
-        return Client.shared.request(endpoint: FeedEndpoint.deleteByForeignId(foreignId, feedId: feedId)) { [weak self] result in
+        return Client.feedSharedClient.request(endpoint: FeedEndpoint.deleteByForeignId(foreignId, feedId: feedId)) { [weak self] result in
             if let self = self {
                 result.parseRemoved(self.callbackQueue, completion)
             }
