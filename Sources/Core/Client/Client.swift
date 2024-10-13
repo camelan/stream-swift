@@ -38,7 +38,8 @@ public final class Client {
     public var currentUser: UserProtocol?
     
     /// A configuration to initialize the shared Client.
-    public static var config = Config(apiKey: "", appId: "")
+    public static var feedConfig = Config(apiKey: "", appId: "")
+    public static var notificationConfig = Config(apiKey: "", appId: "")
     
     /// Enable this if you want to wrap any `Missable` bad decoded objects as missed.
     /// - Note: If it's enabled the parser will return a response with missed objects and print errors in logs.
@@ -53,12 +54,19 @@ public final class Client {
     /// // Create Chris's user feed.
     /// let chrisFeed = Client.shared.flatFeed(feedSlug: "user", userId: "chris")
     /// ```
-    public static var shared = Client(apiKey: Client.config.apiKey,
-                                      appId: Client.config.appId,
-                                      baseURL: Client.config.baseURL,
-                                      networkProvider: Client.config.networkProvider,
-                                      callbackQueue: Client.config.callbackQueue,
-                                      logsEnabled: Client.config.logsEnabled)
+    public static var feedSharedClient = Client(apiKey: Client.feedConfig.apiKey,
+                                                appId: Client.feedConfig.appId,
+                                                baseURL: Client.feedConfig.baseURL,
+                                                networkProvider: Client.feedConfig.networkProvider,
+                                                callbackQueue: Client.feedConfig.callbackQueue,
+                                                logsEnabled: Client.feedConfig.logsEnabled)
+    
+    public static var notificationSharedClient = Client(apiKey: Client.notificationConfig.apiKey,
+                                                appId: Client.notificationConfig.appId,
+                                                baseURL: Client.notificationConfig.baseURL,
+                                                networkProvider: Client.notificationConfig.networkProvider,
+                                                callbackQueue: Client.notificationConfig.callbackQueue,
+                                                logsEnabled: Client.notificationConfig.logsEnabled)
     
     /// Checks if API key and App Id are valid.
     public var isValid: Bool {

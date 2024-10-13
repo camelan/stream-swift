@@ -48,8 +48,8 @@ public struct FeedId: CustomStringConvertible, Codable {
         self.userId = userId
     }
     
-    public init?(feedSlug: String) {
-        if let userId = Client.shared.currentUserId {
+    public init?(feedSlug: String, client: Client) {
+        if let userId = client.currentUserId {
             self.feedSlug = feedSlug
             self.userId = userId
         } else {
@@ -90,9 +90,12 @@ extension FeedId: Equatable {
 
 extension FeedId {
     public static let any = FeedId(feedSlug: "*", userId: "")
-    public static let user = FeedId(feedSlug: "user")
-    public static let timeline = FeedId(feedSlug: "timeline")
-    public static let notification = FeedId(feedSlug: "notification")
+    public static let user = FeedId(feedSlug: "user",
+                                    client: Client.feedSharedClient)
+    public static let timeline = FeedId(feedSlug: "timeline",
+                                        client: Client.feedSharedClient)
+    public static let notification = FeedId(feedSlug: "notification",
+                                            client: Client.notificationSharedClient)
     
     /// A user feed id with the given userId.
     public static func user(with userId: String) -> FeedId {

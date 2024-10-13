@@ -64,7 +64,7 @@ extension Client {
         
         return create(user: user) { [weak self] result in
             if let user = try? result.get() {
-                Client.shared.currentUser = user
+                Client.feedSharedClient.currentUser = user
                 self?.logger?.log("👤 The current user was setupped with id: \(user.id)")
             } else if let error = result.error {
                 self?.logger?.log(error.localizedDescription)

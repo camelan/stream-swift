@@ -48,7 +48,7 @@ public final class AggregatedFeed: Feed {
                                          includeReactions reactionsOptions: FeedReactionsOptions = [],
                                          completion: @escaping GroupCompletion<T, Group<T>>) -> Cancellable {
         let endpoint = FeedEndpoint.get(feedId, enrich, pagination, "", .none, reactionsOptions)
-        return Client.shared.request(endpoint: endpoint) { [weak self] result in
+        return Client.feedSharedClient.request(endpoint: endpoint) { [weak self] result in
             if let self = self {
                 result.parseGroup(self.callbackQueue, completion)
             }

@@ -29,11 +29,14 @@ extension Feed {
     ///
     /// - Returns: a `SubscribedChannel` keep the subscription util it will be deinit.
     ///            Store the object in a variable for the getting updates and then set it to nil to unsubscribe.
-    public func subscribe<T: ActivityProtocol>(typeOf type: T.Type,
+    public func subscribe<T: ActivityProtocol>(client: Client,
+                                               typeOf type: T.Type,
                                                decoder: JSONDecoder = .default,
                                                logErrorAction: ((String, String) -> Void)?,
                                                subscription: @escaping Subscription<T>) -> SubscribedChannel {
-        let channel = Channel(notificationChannelName, client: Client.fayeClient) { [weak self] data  in
+        let notificationChannelName = getNotificationChannelName(client: client)
+        let channel = Channel(notificationChannelName,
+                              client: Client.fayeClient) { [weak self] data  in
             guard let self = self else {
                 return
             }
@@ -53,8 +56,8 @@ extension Feed {
             }
         }
         
-        channel.ext = ["api_key": Client.shared.apiKey,
-                       "signature": Client.shared.token,
+        channel.ext = ["api_key": client.apiKey,
+                       "signature": client.token,
                        "user_id": notificationChannelName]
         Client.fayeClient.logErrorAction = logErrorAction
         
@@ -78,8 +81,8 @@ extension Feed {
     }
     
     /// A notification channel name.
-    var notificationChannelName: ChannelName {
-        return "site-\(Client.shared.appId)-feed-\(feedId.together)"
+    private func getNotificationChannelName(client: Client) -> ChannelName {
+        return "site-\(client.appId)-feed-\(feedId.together)"
     }
 }
 

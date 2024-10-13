@@ -95,6 +95,6 @@ extension UserProtocol {
 
 extension UserProtocol {
     public static var current: Self? {
-        return Client.shared.currentUser as? Self
+        return Client.feedSharedClient.currentUser as? Self
     }
 }
